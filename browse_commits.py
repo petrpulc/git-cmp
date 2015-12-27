@@ -44,8 +44,8 @@ def browse_commits(o_commit, n_commit):
     
     #check length of subtrees
     for i in range(1,len(o_parents)):
-        o_sublen = sum(1 for _ in repo.walk(o_parents[i].id))
-        n_sublen = sum(1 for _ in repo.walk(n_parents[i].id))
+        o_sublen = sum(1 for _ in original.walk(o_parents[i].id))
+        n_sublen = sum(1 for _ in new.walk(n_parents[i].id))
         if o_sublen != n_sublen:
             if args.v:
                 print "      ! walk of lenght {} expected, {} found".format(o_sublen, n_sublen)
