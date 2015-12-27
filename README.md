@@ -1,5 +1,5 @@
 # git-cmp
-Simple git repository comparisson tool based on pygit2 (written on Python).
+Simple git repository comparisson tool based on pygit2 (written in Python).
 
 Enables to compare two repositories on selected level:
  - *References* - checks if repositories contain same references, no matter on where they are pointing to

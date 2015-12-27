@@ -17,89 +17,89 @@ args = parser.parse_args()
 try:
     original = pygit2.Repository(args.original)
 except KeyError:
-    print "'{}' is not a reposity.".format(args.original)
+    print("'{}' is not a reposity.".format(args.original))
     exit(1)
 
 try:
     new = pygit2.Repository(args.new)
 except KeyError:
-    print "'{}' is not a reposity.".format(args.new)
+    print("'{}' is not a reposity.".format(args.new))
     exit(1)
     
     
 def check_diff(set1, set2, what, offset=0):
-    if (set1 - set2 != set() or (args.pedantic and set1 != set2)):
-        print "{} mismatch!".format(' '*offset + what)
+    if (set1 - set2 or (args.pedantic and set1 != set2)):
+        print("{} mismatch!".format(' '*offset + what))
         if args.v:
             if set1 - set2 != set():
-                print "{} expected, but not found".format(' '*offset + ', '.join(set1-set2))
+                print("{} expected, but not found".format(' '*offset + ', '.join(set1-set2)))
             if set2 - set1 != set():
-                print "{} found, but not expected".format(' '*offset + ', '.join(set2-set1))
+                print("{} found, but not expected".format(' '*offset + ', '.join(set2-set1)))
         exit(1)
 
 
 
 #check refernces
-print "=== References"
+print("=== References")
 o_refs = set(original.listall_references())
 n_refs = set(new.listall_references())
 
 check_diff(o_refs, n_refs, "References", 2)
 
 if args.level == 'ref':
-    print "Repositories match."
+    print("Repositories match.")
     exit()
 #reference check done
 
 
 #check commits
-print "\n=== Commits"
+print("\n=== Commits")
 
 execfile('browse_commits.py')
 
 commit_mapping = {}
 
 for ref in o_refs:
-    print "  Browsing {}:".format(ref)
+    print("  Browsing {}:".format(ref))
     browse_commits(original.lookup_reference(ref).peel(), new.lookup_reference(ref).peel())
 
 if args.level == 'commit':
-    print "Repositories match."
+    print("Repositories match.")
     exit()
 #commit structure check done
 
 
 #check file structures
-print "\n=== Trees"
+print("\n=== Trees")
 execfile('browse_trees.py')
 
 blob_mapping = {}
 
 for o_comm, n_comm in commit_mapping.iteritems():
-    print "  Commit {}:".format(n_comm)
+    print("  Commit {}:".format(n_comm))
     browse_trees(original[o_comm].tree, new[n_comm].tree)
     
 if args.level == 'tree':
-    print "Repositories match."
+    print("Repositories match.")
     exit()
 #check of file structure done
 
 
 #check of files
-print "\n=== Blobs"
+print("\n=== Blobs")
 import difflib
 d = difflib.Differ()
 
 for o_blob, n_blob in blob_mapping.iteritems():
-    print "  Blob {}:".format(n_blob)
+    print("  Blob {}:".format(n_blob))
     if o_blob != n_blob:
-        print "    Contents do not match!"
+        print("    Contents do not match!")
         if args.v:
-            print "Diff:"
-            print ''.join(d.compare(original[o_blob].data.splitlines(1), new[n_blob].data.splitlines(1)))
+            print("Diff:")
+            print(''.join(d.compare(original[o_blob].data.splitlines(1), new[n_blob].data.splitlines(1))))
         exit(1)
 #check of individual files done
 
-print "Repositories match."
+print("Repositories match.")
 exit()
 

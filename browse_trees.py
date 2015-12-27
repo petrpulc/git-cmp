@@ -1,9 +1,9 @@
 def browse_trees(o_tree, n_tree, path = "/"):
-    print "    Folder: {}".format(path)
+    print("    Folder: {}".format(path))
     
     #skip on same ids
     if o_tree.id == n_tree.id:
-        print "      Recursive match"
+        print("      Recursive match")
         return
     
     o_subt = set([e.name for e in o_tree if e.type == 'tree'])
