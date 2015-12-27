@@ -9,7 +9,7 @@ parser.add_argument('new', help='path to a checked repository')
 parser.add_argument('-v', action='store_true', help='print detailed information')
 parser.add_argument('--level', '-l', choices=['ref','commit','tree','blob'], default='commit', help='level of comparation, default: tree')
 parser.add_argument('--pedantic', '-p', action='store_true', help='checked repository must not contain anything in excess')
-parser.add_argument('--author', '-a', action='store_true', help='checked repository must not contain anything in excess')
+parser.add_argument('--author', '-a', action='store_true', help='chech authorship details of commits as well (l>=commit)')
 
 args = parser.parse_args()
 
