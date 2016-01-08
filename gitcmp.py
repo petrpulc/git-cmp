@@ -39,10 +39,10 @@ def check_diff(set1, set2, what, offset=0):
 
 
 
-#check refernces
+#check refernces (and filter only heads)
 print("=== References")
-o_refs = set(original.listall_references())
-n_refs = set(new.listall_references())
+o_refs = set(ref for ref in original.listall_references() if ref.split('/')[1] == 'heads')
+n_refs = set(ref for ref in new.listall_references() if ref.split('/')[1] == 'heads')
 
 check_diff(o_refs, n_refs, "References", 2)
 
