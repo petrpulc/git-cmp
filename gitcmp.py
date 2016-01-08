@@ -46,8 +46,9 @@ n_refs = set(ref for ref in new.listall_references() if ref.split('/')[1] == 'he
 
 check_diff(o_refs, n_refs, "References", 2)
 
+print("  OK")
 if args.level == 'ref':
-    print("Repositories match.")
+    print("\nRepositories match.")
     exit()
 #reference check done
 
@@ -63,8 +64,9 @@ for ref in o_refs:
     print("  Browsing {}:".format(ref))
     browse_commits(original.lookup_reference(ref).peel(), new.lookup_reference(ref).peel())
 
+print("  OK")
 if args.level == 'commit':
-    print("Repositories match.")
+    print("\nRepositories match.")
     exit()
 #commit structure check done
 
@@ -78,9 +80,10 @@ blob_mapping = {}
 for o_comm, n_comm in commit_mapping.iteritems():
     print("  Commit {}:".format(n_comm))
     browse_trees(original[o_comm].tree, new[n_comm].tree)
-    
+
+print("  OK")
 if args.level == 'tree':
-    print("Repositories match.")
+    print("\nRepositories match.")
     exit()
 #check of file structure done
 
@@ -98,8 +101,9 @@ for o_blob, n_blob in blob_mapping.iteritems():
             print("Diff:")
             print(''.join(d.compare(original[o_blob].data.splitlines(1), new[n_blob].data.splitlines(1))))
         exit(1)
-#check of individual files done
 
-print("Repositories match.")
+print("  OK")
+print("\nRepositories match.")
 exit()
+#check of individual files done
 

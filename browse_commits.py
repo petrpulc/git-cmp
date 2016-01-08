@@ -48,8 +48,8 @@ def browse_commits(o_commit, n_commit):
         n_sublen = sum(1 for _ in new.walk(n_parents[i].id))
         if o_sublen != n_sublen:
             if args.v:
-                print("      ! walk of lenght {} expected, {} found".format(o_sublen, n_sublen))
-            print("      Walk from parent {} differs!".format(n_parents[i].id))
+                print("      ! walk of length {} expected, {} found".format(o_sublen, n_sublen))
+            print("      Walk from parent {} differs in length!".format(n_parents[i].id))
             exit(1)
         
         browse_commits(o_parents[i], n_parents[i])
