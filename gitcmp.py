@@ -76,10 +76,11 @@ print("\n=== Trees")
 execfile('browse_trees.py')
 
 blob_mapping = {}
+blob_info = {}
 
 for o_comm, n_comm in commit_mapping.iteritems():
     print("  Commit {}:".format(n_comm))
-    browse_trees(original[o_comm].tree, new[n_comm].tree)
+    browse_trees(original[o_comm].tree, new[n_comm].tree, n_comm)
 
 print("  OK")
 if args.level == 'tree':
@@ -96,7 +97,7 @@ d = difflib.Differ()
 for o_blob, n_blob in blob_mapping.iteritems():
     print("  Blob {}:".format(n_blob))
     if o_blob != n_blob:
-        print("    Contents do not match!")
+        print("    Contents of file {} in commit {} do not match!".format(blob_info[o_blob]['path'], blob_info[o_blob]['commit']))
         if args.v:
             print("Diff:")
             print(''.join(d.compare(original[o_blob].data.splitlines(1), new[n_blob].data.splitlines(1))))

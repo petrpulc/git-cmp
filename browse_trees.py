@@ -1,4 +1,4 @@
-def browse_trees(o_tree, n_tree, path = "/"):
+def browse_trees(o_tree, n_tree, commit, path = "/"):
     print("    Folder: {}".format(path))
     
     #skip on same ids
@@ -18,6 +18,7 @@ def browse_trees(o_tree, n_tree, path = "/"):
     
     for f in o_blobs:
         blob_mapping[o_tree[f].id] = n_tree[f].id
+        blob_info[o_tree[f].id] = {'commit': commit, 'path': path+f}
     
     for f in o_subt:
-        browse_trees(original[o_tree[f].id], new[n_tree[f].id], path+f+"/")
+        browse_trees(original[o_tree[f].id], new[n_tree[f].id], commit, path+f+"/")
