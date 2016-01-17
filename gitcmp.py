@@ -10,6 +10,7 @@ parser.add_argument('-v', action='store_true', help='print detailed information'
 parser.add_argument('--level', '-l', choices=['ref','commit','tree','blob'], default='commit', help='level of comparation, default: tree')
 parser.add_argument('--pedantic', '-p', action='store_true', help='checked repository must not contain anything in excess')
 parser.add_argument('--author', '-a', action='store_true', help='chech authorship details of commits as well (l>=commit)')
+parser.add_argument('--references', '-r', metavar='refs', nargs='+', help='check only selected references')
 
 args = parser.parse_args()
 
@@ -39,12 +40,22 @@ def check_diff(set1, set2, what, offset=0):
 
 
 
-#check refernces (and filter only heads)
+#check refernces (and filter only heads and tags)
 print("=== References")
-o_refs = set(ref for ref in original.listall_references() if ref.split('/')[1] == 'heads')
-n_refs = set(ref for ref in new.listall_references() if ref.split('/')[1] == 'heads')
-
-check_diff(o_refs, n_refs, "References", 2)
+if (args.references == None):
+    o_refs = set(ref for ref in original.listall_references() if ref.split('/')[1] in ['heads', 'tags'])
+    n_refs = set(ref for ref in new.listall_references() if ref.split('/')[1] in ['heads', 'tags'])
+    check_diff(o_refs, n_refs, "References", 2)
+else:
+    o_refs = set()
+    for ref in args.references:
+        if (ref not in original.listall_references()):
+            print("  {} does not exist, please report".format(ref))
+            exit(1)
+        if (ref not in new.listall_references()):
+            print("  {} expected, but not found".format(ref))
+            exit(1)
+        o_refs.add(ref)
 
 print("  OK")
 if args.level == 'ref':
