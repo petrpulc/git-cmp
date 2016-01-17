@@ -11,6 +11,7 @@ parser.add_argument('--level', '-l', choices=['ref','commit','tree','blob'], def
 parser.add_argument('--pedantic', '-p', action='store_true', help='checked repository must not contain anything in excess')
 parser.add_argument('--author', '-a', action='store_true', help='chech authorship details of commits as well (l>=commit)')
 parser.add_argument('--references', '-r', metavar='refs', nargs='+', help='check only selected references')
+parser.add_argument('--reject-msg', metavar='regex', help='reject commit when "regex" found in commit message')
 
 args = parser.parse_args()
 

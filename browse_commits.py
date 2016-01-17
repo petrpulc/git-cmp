@@ -1,3 +1,5 @@
+import re
+
 def browse_commits(o_commit, n_commit):
     if args.v:
         print("    ? {} == {}".format(o_commit.id, n_commit.id))
@@ -21,6 +23,14 @@ def browse_commits(o_commit, n_commit):
             exit(1)
         if o_commit.author.email != n_commit.author.email:
             print("      Commiter email does not match!")
+            exit(1)
+    
+    if args.reject_msg:
+        reg = re.compile(args.reject_msg)
+        if reg.search(n_commit.message) != None:
+            print("      Commit message contains not allowed content!")
+            if args.v:
+                print("      ({})").format(args.reject_msg)
             exit(1)
         
     #check number of parents
