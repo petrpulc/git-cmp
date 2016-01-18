@@ -12,17 +12,16 @@ def browse_commits(o_commit, n_commit):
             return
         else:
             if args.v:
-                print("      ! {} -> {}".format(o_commit.id, n_commit.id))
-            else:
-                print("      Bad structure of repository, commit clash with: {}".format(n_commit.id))
+                print("      ! {} -> {}".format(o_commit.id, commit_mapping[o_commit.id]))
+            print("      Bad structure of repository, commit clash with: {}".format(commit_mapping[o_commit.id]))
             exit(1)
         
     if args.author:
         if o_commit.author.name != n_commit.author.name:
-            print("      Commiter name does not match!")
+            print("      Commit author name does not match!")
             exit(1)
         if o_commit.author.email != n_commit.author.email:
-            print("      Commiter email does not match!")
+            print("      Commit author email does not match!")
             exit(1)
     
     if args.reject_msg:
