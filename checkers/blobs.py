@@ -13,38 +13,40 @@ colorama.init()
 
 
 def __comp_n_diff(data1, data2, blob_sha, note):
-    if data1 != data2:
-        path = Common.blobs_info[blob_sha]['path']
+    if data1 == data2:
+        return
 
-        print("    Contents of file {} in commit {} do not match!".
-              format(path, Common.blobs_info[blob_sha]['commit']))
-        if Common.args.verbose:
-            print("Diff{}:".format(note))
-            diff = list(unified_diff(data1, data2, 'a' + path, 'b' + path))
+    path = Common.blobs_info[blob_sha]['path']
 
-            sys.stdout.write(colorama.Style.BRIGHT)
-            for row in diff[:2]:
-                sys.stdout.write(row)
+    print("    Contents of file {} in commit {} do not match!".
+          format(path, Common.blobs_info[blob_sha]['commit']))
+    if Common.args.verbose:
+        print("Diff{}:".format(note))
+        diff = list(unified_diff(data1, data2, 'a' + path, 'b' + path))
+
+        sys.stdout.write(colorama.Style.BRIGHT)
+        for row in diff[:2]:
+            sys.stdout.write(row)
+        sys.stdout.write(colorama.Style.RESET_ALL)
+
+        sys.stdout.write(colorama.Fore.CYAN)
+        sys.stdout.write(diff[2])
+        sys.stdout.write(colorama.Style.RESET_ALL)
+
+        for row in diff[3:]:
+            if row.startswith('+'):
+                sys.stdout.write(colorama.Fore.GREEN)
+            if row.startswith('-'):
+                sys.stdout.write(colorama.Fore.RED)
+
+            clean = row.rstrip()
+            sys.stdout.write(clean)
+            if len(row) > 2 and len(clean) < len(row)-1:
+                sys.stdout.write(colorama.Back.RED)
+            sys.stdout.write(row[len(clean):])
             sys.stdout.write(colorama.Style.RESET_ALL)
 
-            sys.stdout.write(colorama.Fore.CYAN)
-            sys.stdout.write(diff[2])
-            sys.stdout.write(colorama.Style.RESET_ALL)
-
-            for row in diff[3:]:
-                if row.startswith('+'):
-                    sys.stdout.write(colorama.Fore.GREEN)
-                if row.startswith('-'):
-                    sys.stdout.write(colorama.Fore.RED)
-
-                clean = row.rstrip()
-                sys.stdout.write(clean)
-                if len(row) > 2 and len(clean) < len(row)-1:
-                    sys.stdout.write(colorama.Back.RED)
-                sys.stdout.write(row[len(clean):])
-                sys.stdout.write(colorama.Style.RESET_ALL)
-
-        exit(1)
+    exit(1)
 
 
 def check():
