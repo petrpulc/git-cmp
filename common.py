@@ -1,4 +1,12 @@
+"""
+Common variable and method module.
+"""
+
+
 class Common:
+    """
+    Singleton storage for variables used during comparison.
+    """
     # values from argument parser
     args = None
 
