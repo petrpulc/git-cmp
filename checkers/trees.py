@@ -42,6 +42,3 @@ def check():
         __browse_trees(o_tree, n_tree, n_comm)
 
     print("  OK")
-    if Common.args.level == 'tree':
-        print("\nRepositories match.")
-        exit()

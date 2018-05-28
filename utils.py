@@ -20,3 +20,9 @@ def check_diff(set1, set2, what, offset=0):
             if set2 - set1 != set():
                 print("{} found, but not expected".format(' ' * offset + ', '.join(set2 - set1)))
         exit(1)
+
+
+def check_level_and_exit(level=None):
+    if level is None or Common.args.level == level:
+        print("\nRepositories match.")
+        exit()

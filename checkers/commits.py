@@ -80,6 +80,3 @@ def check():
         __browse_commits(o_commit, n_commit)
 
     print("  OK")
-    if Common.args.level == 'commit':
-        print("\nRepositories match.")
-        exit()

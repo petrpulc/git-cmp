@@ -26,8 +26,4 @@ def check():
             o_refs.add(reference)
 
     print("  OK")
-    if Common.args.level == 'ref':
-        print("\nRepositories match.")
-        exit()
-
     Common.references = o_refs

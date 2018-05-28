@@ -71,4 +71,3 @@ def check():
             __comp_n_diff(data1, data2, o_blob, ' (whitespace ignored)')
 
     print("  OK")
-    print("\nRepositories match.")

@@ -7,7 +7,7 @@ import argparse
 
 from checkers import references, commits, trees, blobs
 from common import Common
-from utils import load_repository
+from utils import load_repository, check_level_and_exit
 
 
 def parse_arguments():
@@ -43,6 +43,13 @@ if __name__ == "__main__":
     Common.new = load_repository(Common.args.new)
 
     references.check()
+    check_level_and_exit('ref')
+
     commits.check()
+    check_level_and_exit('commit')
+
     trees.check()
+    check_level_and_exit('tree')
+
     blobs.check()
+    check_level_and_exit()
