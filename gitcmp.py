@@ -2,7 +2,8 @@
 
 import argparse
 
-from checkers import *
+from checkers import references, commits, trees, blobs
+from common import Common
 from utils import load_repository
 
 
@@ -23,17 +24,17 @@ def parse_arguments():
     parser.add_argument('--ignore-whitespace', choices=['leading', 'both'], default='none',
                         help='ignore leading whitespace in blobs')
 
-    return parser.parse_args()
+    Common.args = parser.parse_args()
 
 
 if __name__ == "__main__":
-    args = parse_arguments()
+    parse_arguments()
 
     # load repositories
-    original = load_repository(args.original)
-    new = load_repository(args.new)
+    Common.original = load_repository(Common.args.original)
+    Common.new = load_repository(Common.args.new)
 
-    references = references.check(args, original, new)
-    commit_mapping = commits.check(args, original, new, references)
-    blob_mapping, blob_info = trees.check(args, original, new, commit_mapping)
-    blobs.check(args, original, new, blob_mapping, blob_info)
+    Common.references = references.check()
+    Common.commit_mapping = commits.check()
+    Common.blob_mapping, Common.blob_info = trees.check()
+    blobs.check()
