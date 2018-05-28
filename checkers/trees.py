@@ -1,3 +1,7 @@
+"""
+Tree level checker (existence of files and folders).
+"""
+
 from common import Common
 from utils import check_diff
 
@@ -20,16 +24,18 @@ def __browse_trees(o_tree, n_tree, commit, path="/"):
 
     check_diff(o_blobs, n_blobs, "File", 6)
 
-    for f in o_blobs:
-        Common.blobs[o_tree[f].id] = n_tree[f].id
-        Common.blobs_info[o_tree[f].id] = {'commit': commit, 'path': path + f}
+    for blob in o_blobs:
+        Common.blobs[o_tree[blob].id] = n_tree[blob].id
+        Common.blobs_info[o_tree[blob].id] = {'commit': commit, 'path': path + blob}
 
-    for f in o_subtree:
-        __browse_trees(o_tree[f], n_tree[f], commit, path + f + "/")
+    for tree in o_subtree:
+        __browse_trees(o_tree[tree], n_tree[tree], commit, path + tree + "/")
 
 
 def check():
-    # check file structures
+    """
+    Run the checker on tree objects.
+    """
     print("\n=== Trees")
 
     for o_comm, n_comm in Common.commits.items():

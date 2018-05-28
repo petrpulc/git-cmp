@@ -1,3 +1,7 @@
+"""
+Commit level checker (repository structure and commit properties).
+"""
+
 import re
 
 from common import Common
@@ -16,7 +20,8 @@ def __browse_commits(o_commit, n_commit):
         else:
             if Common.args.verbose:
                 print("      ! {} -> {}".format(o_commit.id, Common.commits[o_commit.id]))
-            print("      Bad structure of repository, commit clash with: {}".format(Common.commits[o_commit.id]))
+            print("      Bad structure of repository, commit clash with: {}".
+                  format(Common.commits[o_commit.id]))
             exit(1)
 
     if Common.args.author:
@@ -48,7 +53,7 @@ def __browse_commits(o_commit, n_commit):
     Common.commits[o_commit.id] = n_commit.id
 
     # stop if root
-    if len(o_parents) == 0:
+    if not o_parents:
         return
 
     # continue in same branch
@@ -68,7 +73,9 @@ def __browse_commits(o_commit, n_commit):
 
 
 def check():
-    # check commits
+    """
+    Run the checker on commits.
+    """
     print("\n=== Commits")
 
     for reference in Common.references:

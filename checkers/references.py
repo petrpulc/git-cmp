@@ -1,3 +1,7 @@
+"""
+Reference level checker (existence of given references or all refs/heads ans refs/tags).
+"""
+
 from common import Common
 from utils import check_diff
 
@@ -8,7 +12,9 @@ def __filter(reference_list):
 
 
 def check():
-    # check references (and filter only heads and tags)
+    """
+    Run the checker on references.
+    """
     print("=== References")
     if Common.args.references is None:
         o_refs = __filter(Common.original.listall_references())
