@@ -1,5 +1,7 @@
 import pygit2
 
+from common import Common
+
 
 def load_repository(path):
     try:
@@ -9,10 +11,10 @@ def load_repository(path):
         exit(1)
 
 
-def check_diff(args, set1, set2, what, offset=0):
-    if (set1 - set2) or (args.pedantic and set1 != set2):
+def check_diff(set1, set2, what, offset=0):
+    if (set1 - set2) or (Common.args.pedantic and set1 != set2):
         print("{} mismatch!".format(' ' * offset + what))
-        if args.v:
+        if Common.args.v:
             if set1 - set2 != set():
                 print("{} expected, but not found".format(' ' * offset + ', '.join(set1 - set2)))
             if set2 - set1 != set():

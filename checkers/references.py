@@ -13,7 +13,7 @@ def check():
     if Common.args.references is None:
         o_refs = __filter(Common.original.listall_references())
         n_refs = __filter(Common.new.listall_references())
-        check_diff(Common.args, o_refs, n_refs, "References", 2)
+        check_diff(o_refs, n_refs, "References", 2)
     else:
         o_refs = set()
         for reference in Common.args.references:
