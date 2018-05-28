@@ -7,6 +7,28 @@ import re
 from common import Common
 
 
+def __check_author(o_commit, n_commit):
+    if not Common.args.author:
+        return
+    if o_commit.author.name != n_commit.author.name:
+        print("      Commit author name does not match!")
+        exit(1)
+    if o_commit.author.email != n_commit.author.email:
+        print("      Commit author email does not match!")
+        exit(1)
+
+
+def __check_message(n_commit):
+    if not Common.args.reject_msg:
+        return
+    regexp = re.compile(Common.args.reject_msg)
+    if regexp.search(n_commit.message) is not None:
+        print("      Commit message contains not allowed content!")
+        if Common.args.verbose:
+            print("      ({})").format(Common.args.reject_msg)
+        exit(1)
+
+
 def __browse_commits(o_commit, n_commit):
     if Common.args.verbose:
         print("    ? {} == {}".format(o_commit.id, n_commit.id))
@@ -24,21 +46,8 @@ def __browse_commits(o_commit, n_commit):
                   format(Common.commits[o_commit.id]))
             exit(1)
 
-    if Common.args.author:
-        if o_commit.author.name != n_commit.author.name:
-            print("      Commit author name does not match!")
-            exit(1)
-        if o_commit.author.email != n_commit.author.email:
-            print("      Commit author email does not match!")
-            exit(1)
-
-    if Common.args.reject_msg:
-        regexp = re.compile(Common.args.reject_msg)
-        if regexp.search(n_commit.message) is not None:
-            print("      Commit message contains not allowed content!")
-            if Common.args.verbose:
-                print("      ({})").format(Common.args.reject_msg)
-            exit(1)
+    __check_author(o_commit, n_commit)
+    __check_message(n_commit)
 
     # check number of parents
     o_parents = o_commit.parents
