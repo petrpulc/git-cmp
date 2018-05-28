@@ -64,8 +64,8 @@ def check():
         if Common.args.ignore_whitespace == 'none':
             __comp_n_diff(original_lines, new_lines, o_blob, '')
         elif Common.args.ignore_whitespace == 'leading':
-            data1 = [l.strip(' \t') for l in original_lines]
-            data2 = [l.strip(' \t') for l in new_lines]
+            data1 = [l.lstrip(' \t') for l in original_lines]
+            data2 = [l.lstrip(' \t') for l in new_lines]
             __comp_n_diff(data1, data2, o_blob, ' (leading whitespace ignored)')
         elif Common.args.ignore_whitespace == 'both':
             data1 = [l.strip() + '\n' for l in original_lines]
