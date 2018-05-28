@@ -11,8 +11,8 @@ class Common:
     references = None
 
     # mapping of commits
-    commit_mapping = None
+    commits = None
 
     # blob mapping and info
-    blob_mapping = None
-    blob_info = None
+    blobs = None
+    blobs_info = None

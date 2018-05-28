@@ -3,20 +3,20 @@ import re
 from common import Common
 
 
-def __browse_commits(o_commit, n_commit, mapping):
+def __browse_commits(o_commit, n_commit):
     if Common.args.verbose:
         print("    ? {} == {}".format(o_commit.id, n_commit.id))
     else:
         print("    Commit {}".format(n_commit.id))
 
     # do not check again, detect clashes
-    if o_commit.id in mapping:
-        if n_commit.id == mapping[o_commit.id]:
+    if o_commit.id in Common.commits:
+        if n_commit.id == Common.commits[o_commit.id]:
             return
         else:
             if Common.args.verbose:
-                print("      ! {} -> {}".format(o_commit.id, mapping[o_commit.id]))
-            print("      Bad structure of repository, commit clash with: {}".format(mapping[o_commit.id]))
+                print("      ! {} -> {}".format(o_commit.id, Common.commits[o_commit.id]))
+            print("      Bad structure of repository, commit clash with: {}".format(Common.commits[o_commit.id]))
             exit(1)
 
     if Common.args.author:
@@ -45,14 +45,14 @@ def __browse_commits(o_commit, n_commit, mapping):
         exit(1)
 
     # store to hash of mapped commits
-    mapping[o_commit.id] = n_commit.id
+    Common.commits[o_commit.id] = n_commit.id
 
     # stop if root
     if len(o_parents) == 0:
         return
 
     # continue in same branch
-    __browse_commits(o_parents[0], n_parents[0], mapping)
+    __browse_commits(o_parents[0], n_parents[0])
 
     # check length of subtrees
     for i in range(1, len(o_parents)):
@@ -64,25 +64,22 @@ def __browse_commits(o_commit, n_commit, mapping):
             print("      Walk from parent {} differs in length!".format(n_parents[i].id))
             exit(1)
 
-        __browse_commits(o_parents[i], n_parents[i], mapping)
+        __browse_commits(o_parents[i], n_parents[i])
 
 
 def check():
     # check commits
     print("\n=== Commits")
 
-    mapping = {}
+    Common.commits = {}
 
     for reference in Common.references:
         print("  Browsing {}:".format(reference))
         o_commit = Common.original.lookup_reference(reference).peel()
         n_commit = Common.new.lookup_reference(reference).peel()
-        __browse_commits(o_commit, n_commit, mapping)
+        __browse_commits(o_commit, n_commit)
 
     print("  OK")
     if Common.args.level == 'commit':
         print("\nRepositories match.")
         exit()
-
-    return mapping
-    # commit structure check done

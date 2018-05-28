@@ -34,7 +34,7 @@ if __name__ == "__main__":
     Common.original = load_repository(Common.args.original)
     Common.new = load_repository(Common.args.new)
 
-    Common.references = references.check()
-    Common.commit_mapping = commits.check()
-    Common.blob_mapping, Common.blob_info = trees.check()
+    references.check()
+    commits.check()
+    trees.check()
     blobs.check()
