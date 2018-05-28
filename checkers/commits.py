@@ -71,8 +71,6 @@ def check():
     # check commits
     print("\n=== Commits")
 
-    Common.commits = {}
-
     for reference in Common.references:
         print("  Browsing {}:".format(reference))
         o_commit = Common.original.lookup_reference(reference).peel()

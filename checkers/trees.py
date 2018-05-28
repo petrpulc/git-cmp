@@ -32,9 +32,6 @@ def check():
     # check file structures
     print("\n=== Trees")
 
-    Common.blobs = {}
-    Common.blobs_info = {}
-
     for o_comm, n_comm in Common.commits.items():
         print("  Commit {}:".format(n_comm))
         o_tree = Common.original[o_comm].tree

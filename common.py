@@ -19,8 +19,8 @@ class Common:
     references = None
 
     # mapping of commits
-    commits = None
+    commits = {}
 
     # blob mapping and info
-    blobs = None
-    blobs_info = None
+    blobs = {}
+    blobs_info = {}
