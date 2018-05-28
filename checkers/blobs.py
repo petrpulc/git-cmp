@@ -12,7 +12,7 @@ def check():
         if cmp1 != cmp2:
             print("    Contents of file {} in commit {} do not match!".format(Common.blob_info[o_blob]['path'],
                                                                               Common.blob_info[o_blob]['commit']))
-            if Common.args.v:
+            if Common.args.verbose:
                 print("Diff{}:".format(note))
                 print(''.join(d.compare(diff1, diff2)))
             exit(1)

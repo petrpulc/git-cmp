@@ -4,7 +4,7 @@ from common import Common
 
 
 def __browse_commits(o_commit, n_commit, mapping):
-    if Common.args.v:
+    if Common.args.verbose:
         print("    ? {} == {}".format(o_commit.id, n_commit.id))
     else:
         print("    Commit {}".format(n_commit.id))
@@ -14,7 +14,7 @@ def __browse_commits(o_commit, n_commit, mapping):
         if n_commit.id == mapping[o_commit.id]:
             return
         else:
-            if Common.args.v:
+            if Common.args.verbose:
                 print("      ! {} -> {}".format(o_commit.id, mapping[o_commit.id]))
             print("      Bad structure of repository, commit clash with: {}".format(mapping[o_commit.id]))
             exit(1)
@@ -31,7 +31,7 @@ def __browse_commits(o_commit, n_commit, mapping):
         regexp = re.compile(Common.args.reject_msg)
         if regexp.search(n_commit.message) is not None:
             print("      Commit message contains not allowed content!")
-            if Common.args.v:
+            if Common.args.verbose:
                 print("      ({})").format(Common.args.reject_msg)
             exit(1)
 
@@ -39,7 +39,7 @@ def __browse_commits(o_commit, n_commit, mapping):
     o_parents = o_commit.parents
     n_parents = n_commit.parents
     if len(o_parents) != len(n_parents):
-        if Common.args.v:
+        if Common.args.verbose:
             print("      ! {} parents expected, {} present".format(len(o_parents), len(n_parents)))
         print("      Commit does not have same number of parents!")
         exit(1)
@@ -59,7 +59,7 @@ def __browse_commits(o_commit, n_commit, mapping):
         o_sublen = sum(1 for _ in Common.original.walk(o_parents[i].id))
         n_sublen = sum(1 for _ in Common.new.walk(n_parents[i].id))
         if o_sublen != n_sublen:
-            if Common.args.v:
+            if Common.args.verbose:
                 print("      ! walk of length {} expected, {} found".format(o_sublen, n_sublen))
             print("      Walk from parent {} differs in length!".format(n_parents[i].id))
             exit(1)

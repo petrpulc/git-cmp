@@ -14,7 +14,7 @@ def load_repository(path):
 def check_diff(set1, set2, what, offset=0):
     if (set1 - set2) or (Common.args.pedantic and set1 != set2):
         print("{} mismatch!".format(' ' * offset + what))
-        if Common.args.v:
+        if Common.args.verbose:
             if set1 - set2 != set():
                 print("{} expected, but not found".format(' ' * offset + ', '.join(set1 - set2)))
             if set2 - set1 != set():
