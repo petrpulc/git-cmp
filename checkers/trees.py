@@ -29,7 +29,9 @@ def __browse_trees(o_tree, n_tree, commit, path="/"):
         Common.blobs_info[o_tree[blob].id] = {'commit': commit, 'path': path + blob}
 
     for tree in o_subtree:
-        __browse_trees(o_tree[tree], n_tree[tree], commit, path + tree + "/")
+        __browse_trees(Common.original[o_tree[tree].id],
+                       Common.new[n_tree[tree].id],
+                       commit, path + tree + "/")
 
 
 def check():
