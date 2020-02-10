@@ -5,7 +5,11 @@ Blob level checker (individual files and file contents).
 import sys
 from difflib import unified_diff
 
+import colorama
+
 from common import Common
+
+colorama.init()
 
 
 def __comp_n_diff(data1, data2, blob_sha, note):
@@ -18,10 +22,30 @@ def __comp_n_diff(data1, data2, blob_sha, note):
           format(path, Common.blobs_info[blob_sha]['commit']))
     if Common.args.verbose:
         try:
-            diff = unified_diff(data1, data2, 'a' + path, 'b' + path)
+            diff = list(unified_diff(data1, data2, 'a' + path, 'b' + path))
 
             print("Diff{}:".format(note))
-            print(''.join(diff))
+            sys.stdout.write(colorama.Style.BRIGHT)
+            for row in diff[:2]:
+                sys.stdout.write(row)
+            sys.stdout.write(colorama.Style.RESET_ALL)
+
+            sys.stdout.write(colorama.Fore.CYAN)
+            sys.stdout.write(diff[2])
+            sys.stdout.write(colorama.Style.RESET_ALL)
+
+            for row in diff[3:]:
+                if row.startswith('+'):
+                    sys.stdout.write(colorama.Fore.GREEN)
+                if row.startswith('-'):
+                    sys.stdout.write(colorama.Fore.RED)
+
+                clean = row.rstrip()
+                sys.stdout.write(clean)
+                if len(row) > 2 and len(clean) < len(row) - 1:
+                    sys.stdout.write(colorama.Back.RED)
+                sys.stdout.write(row[len(clean):])
+                sys.stdout.write(colorama.Style.RESET_ALL)
 
         except TypeError:
             print("Binary files, no diff to be shown.")
