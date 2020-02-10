@@ -12,10 +12,12 @@ def __check_author(o_commit, n_commit):
         return
     if o_commit.author.name != n_commit.author.name:
         print("      Commit author name does not match!")
-        exit(1)
+        if not Common.args.print_all:
+            exit(1)
     if o_commit.author.email != n_commit.author.email:
         print("      Commit author email does not match!")
-        exit(1)
+        if not Common.args.print_all:
+            exit(1)
 
 
 def __check_message(n_commit):
@@ -26,7 +28,8 @@ def __check_message(n_commit):
         print("      Commit message contains not allowed content!")
         if Common.args.verbose:
             print("      ({})").format(Common.args.reject_msg)
-        exit(1)
+        if not Common.args.print_all:
+            exit(1)
 
 
 def __browse_commits(o_commit, n_commit):
@@ -44,7 +47,8 @@ def __browse_commits(o_commit, n_commit):
                 print("      ! {} -> {}".format(o_commit.id, Common.commits[o_commit.id]))
             print("      Bad structure of repository, commit clash with: {}".
                   format(Common.commits[o_commit.id]))
-            exit(1)
+            if not Common.args.print_all:
+                exit(1)
 
     __check_author(o_commit, n_commit)
     __check_message(n_commit)
@@ -56,7 +60,8 @@ def __browse_commits(o_commit, n_commit):
         if Common.args.verbose:
             print("      ! {} parents expected, {} present".format(len(o_parents), len(n_parents)))
         print("      Commit does not have same number of parents!")
-        exit(1)
+        if not Common.args.print_all:
+            exit(1)
 
     # store to hash of mapped commits
     Common.commits[o_commit.id] = n_commit.id
@@ -76,7 +81,8 @@ def __browse_commits(o_commit, n_commit):
             if Common.args.verbose:
                 print("      ! walk of length {} expected, {} found".format(o_sublen, n_sublen))
             print("      Walk from parent {} differs in length!".format(n_parents[i].id))
-            exit(1)
+            if not Common.args.print_all:
+                exit(1)
 
         __browse_commits(o_parents[i], n_parents[i])
 

@@ -35,7 +35,8 @@ def check_diff(set1, set2, what, offset=0):
                 print("{} expected, but not found".format(' ' * offset + ', '.join(set1 - set2)))
             if set2 - set1 != set():
                 print("{} found, but not expected".format(' ' * offset + ', '.join(set2 - set1)))
-        exit(1)
+        if not Common.args.print_all:
+            exit(1)
 
 
 def check_level_and_exit(level=None):

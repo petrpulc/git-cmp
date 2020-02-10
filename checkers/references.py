@@ -25,10 +25,12 @@ def check():
         for reference in Common.args.references:
             if reference not in Common.original.listall_references():
                 print("  {} does not exist, please report".format(reference))
-                exit(1)
+                if not Common.args.print_all:
+                    exit(1)
             if reference not in Common.new.listall_references():
                 print("  {} expected, but not found".format(reference))
-                exit(1)
+                if not Common.args.print_all:
+                    exit(1)
             o_refs.add(reference)
 
     print("  OK")

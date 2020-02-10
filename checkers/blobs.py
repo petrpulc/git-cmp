@@ -50,7 +50,8 @@ def __comp_n_diff(data1, data2, blob_sha, note):
         except TypeError:
             print("Binary files, no diff to be shown.")
 
-    exit(1)
+    if not Common.args.print_all:
+        exit(1)
 
 
 def check():

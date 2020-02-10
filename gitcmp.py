@@ -31,6 +31,7 @@ def parse_arguments():
                         help='reject commit when "regex" found in commit message')
     parser.add_argument('--ignore-whitespace', choices=['leading', 'both'], default='none',
                         help='ignore leading whitespace in blobs')
+    parser.add_argument('--print_all', action='store_true', help='do not exit on first error')
 
     Common.args = parser.parse_args()
 
