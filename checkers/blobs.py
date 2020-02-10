@@ -41,7 +41,12 @@ def __comp_n_diff(data1, data2, blob_sha, note):
                     sys.stdout.write(colorama.Fore.RED)
 
                 clean = row.rstrip()
-                sys.stdout.write(clean)
+                try:
+                    sys.stdout.write(clean)
+                except UnicodeEncodeError:
+                    sys.stdout.write(clean.encode('ascii', errors='ignore').decode())
+                    sys.stdout.write(colorama.Fore.CYAN)
+                    sys.stdout.write(' !!! Error in UTF encoding, this row is incomplete')
                 if len(row) > 2 and len(clean) < len(row) - 1:
                     sys.stdout.write(colorama.Back.RED)
                 sys.stdout.write(row[len(clean):])
