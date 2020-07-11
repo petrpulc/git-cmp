@@ -74,7 +74,7 @@ def check():
             original_lines = Common.original[o_blob].data
             new_lines = Common.new[n_blob].data
 
-        if Common.args.ignore_whitespace == 'none':
+        if Common.args.ignore_whitespace == 'none' or type(new_lines[0]) is not str:
             __comp_n_diff(original_lines, new_lines, o_blob, '')
         elif Common.args.ignore_whitespace == 'leading':
             data1 = [l.lstrip(' \t') for l in original_lines]
