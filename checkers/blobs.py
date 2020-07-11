@@ -65,6 +65,9 @@ def check():
     print("\n=== Blobs")
 
     for o_blob, n_blob in Common.blobs.items():
+        if o_blob == n_blob:
+            continue
+
         print("  Blob {}:".format(n_blob))
 
         try:
