@@ -14,13 +14,13 @@ def __browse_trees(o_tree, n_tree, commit, path="/"):
         print("      Recursive match")
         return
 
-    o_subtree = set(e.name for e in o_tree if e.type == 'tree')
-    n_subtree = set(e.name for e in n_tree if e.type == 'tree')
+    o_subtree = set(e.name for e in o_tree if e.type_str == 'tree')
+    n_subtree = set(e.name for e in n_tree if e.type_str == 'tree')
 
     check_diff(o_subtree, n_subtree, "Folder", 6)
 
-    o_blobs = set(e.name for e in o_tree if e.type == 'blob')
-    n_blobs = set(e.name for e in n_tree if e.type == 'blob')
+    o_blobs = set(e.name for e in o_tree if e.type_str == 'blob')
+    n_blobs = set(e.name for e in n_tree if e.type_str == 'blob')
 
     check_diff(o_blobs, n_blobs, "File", 6)
 
