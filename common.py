@@ -24,3 +24,9 @@ class Common:
     # blob mapping and info
     blobs = {}
     blobs_info = {}
+
+    output = ""
+
+    @classmethod
+    def lazy_print(cls, data):
+        cls.output += data + "\n"

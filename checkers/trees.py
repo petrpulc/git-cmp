@@ -7,11 +7,11 @@ from utils import check_diff
 
 
 def __browse_trees(o_tree, n_tree, commit, path="/"):
-    print("    Folder: {}".format(path))
+    Common.lazy_print("    Folder: {}".format(path))
 
     # skip on same ids
     if o_tree.id == n_tree.id:
-        print("      Recursive match")
+        Common.lazy_print("      Recursive match")
         return
 
     o_subtree = set(e.name for e in o_tree if e.type_str == 'tree')
@@ -38,12 +38,12 @@ def check():
     """
     Run the checker on tree objects.
     """
-    print("\n=== Trees")
+    Common.lazy_print("\n=== Trees")
 
     for o_comm, n_comm in Common.commits.items():
-        print("  Commit {}:".format(n_comm))
+        Common.lazy_print("  Commit {}:".format(n_comm))
         o_tree = Common.original[o_comm].tree
         n_tree = Common.new[n_comm].tree
         __browse_trees(o_tree, n_tree, n_comm)
 
-    print("  OK")
+    Common.lazy_print("  OK")
