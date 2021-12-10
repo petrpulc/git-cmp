@@ -18,6 +18,7 @@ def __comp_n_diff(data1, data2, blob_sha, note):
 
     path = Common.blobs_info[blob_sha]['path']
 
+    print(Common.output)
     print("    Contents of file {} in commit {} do not match!".
           format(path, Common.blobs_info[blob_sha]['commit']))
     if Common.args.verbose:
@@ -62,13 +63,13 @@ def check():
     """
     Run the checker on blobs.
     """
-    print("\n=== Blobs")
+    Common.lazy_print("\n=== Blobs")
 
     for o_blob, n_blob in Common.blobs.items():
         if o_blob == n_blob:
             continue
 
-        print("  Blob {}:".format(n_blob))
+        Common.lazy_print("  Blob {}:".format(n_blob))
 
         try:
             original_lines = [l.decode() for l in Common.original[o_blob].data.splitlines(1)]

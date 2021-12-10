@@ -15,7 +15,8 @@ def load_repository(path):
     try:
         return pygit2.Repository(path)
     except KeyError:
-        print("'{}' is not a reposity.".format(path))
+        Common.lazy_print("'{}' is not a reposity.".format(path))
+        print(Common.output)
         exit(1)
 
 
@@ -29,12 +30,13 @@ def check_diff(set1, set2, what, offset=0):
     :param offset: Printing offset.
     """
     if (set1 - set2) or (Common.args.pedantic and set1 != set2):
-        print("{} mismatch!".format(' ' * offset + what))
+        Common.lazy_print("{} mismatch!".format(' ' * offset + what))
         if Common.args.verbose:
             if set1 - set2 != set():
-                print("{} expected, but not found".format(' ' * offset + ', '.join(set1 - set2)))
+                Common.lazy_print("{} expected, but not found".format(' ' * offset + ', '.join(set1 - set2)))
             if set2 - set1 != set():
-                print("{} found, but not expected".format(' ' * offset + ', '.join(set2 - set1)))
+                Common.lazy_print("{} found, but not expected".format(' ' * offset + ', '.join(set2 - set1)))
+        print(Common.output)
         exit(1)
 
 
