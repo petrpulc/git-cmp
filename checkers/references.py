@@ -15,7 +15,7 @@ def check():
     """
     Run the checker on references.
     """
-    print("=== References")
+    Common.lazy_print("=== References")
     if Common.args.references is None:
         o_refs = __filter(Common.original.listall_references())
         n_refs = __filter(Common.new.listall_references())
@@ -24,12 +24,14 @@ def check():
         o_refs = set()
         for reference in Common.args.references:
             if reference not in Common.original.listall_references():
-                print("  {} does not exist, please report".format(reference))
+                Common.lazy_print("  {} does not exist, please report".format(reference))
+                print(Common.output)
                 exit(1)
             if reference not in Common.new.listall_references():
-                print("  {} expected, but not found".format(reference))
+                Common.lazy_print("  {} expected, but not found".format(reference))
+                print(Common.output)
                 exit(1)
             o_refs.add(reference)
 
-    print("  OK")
+    Common.lazy_print("  OK")
     Common.references = o_refs
