@@ -1,17 +1,9 @@
 """
 Commit level checker (repository structure and commit properties).
 """
-import os
-import re
 import subprocess
 
-import pygit2
-from pygit2 import GIT_SORT_TIME
-
 from common import Common
-from asciidag.node import Node
-from asciidag.graph import Graph
-
 
 def __check_author(o_commit, n_commit):
     if o_commit.author.name != n_commit.author.name:
