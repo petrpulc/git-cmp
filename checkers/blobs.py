@@ -16,7 +16,7 @@ def __get_diff(data1, data2, path):
 
         buffer.extend(diff[:2])
 
-        buffer.append(colored(diff[2], "cyan", force_color=True))
+        buffer.append(colored(diff[2].rstrip(), "cyan", force_color=True)+"\n")
 
         for row in diff[3:]:
             row_buffer = ""
