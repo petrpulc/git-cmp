@@ -3,7 +3,7 @@ Tree level checker (existence of files and folders).
 """
 
 from common import Common
-from utils import check_diff
+from utils import check_diff, check_issues_and_exit
 
 
 def __browse_trees(o_tree, n_tree, commit, path="/"):
@@ -15,11 +15,13 @@ def __browse_trees(o_tree, n_tree, commit, path="/"):
     n_subtree = set(e.name for e in n_tree if e.type_str == 'tree')
 
     check_diff(o_subtree, n_subtree, "Folder")
+    check_issues_and_exit()
 
     o_blobs = set(e.name for e in o_tree if e.type_str == 'blob')
     n_blobs = set(e.name for e in n_tree if e.type_str == 'blob')
 
     check_diff(o_blobs, n_blobs, "File")
+    check_issues_and_exit()
 
     for blob in o_blobs:
         Common.blobs[o_tree[blob].id] = n_tree[blob].id
