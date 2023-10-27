@@ -1,6 +1,7 @@
 """
 Common variable and method module.
 """
+import re
 
 
 class Common:
@@ -20,13 +21,22 @@ class Common:
 
     # mapping of commits
     commits = {}
+    # message refusal regex
+    reject_msg_regex = None
 
     # blob mapping and info
     blobs = {}
     blobs_info = {}
 
-    output = ""
+    # issues collected along the way
+    issues = []
 
     @classmethod
-    def lazy_print(cls, data):
-        cls.output += data + "\n"
+    def add_issue(cls, msg, detail=""):
+        cls.issues.append((msg, detail))
+
+    @classmethod
+    def compile_args(cls, args):
+        cls.args = args
+        if cls.args.reject_msg:
+            cls.reject_msg_regex = re.compile(args.reject_msg)

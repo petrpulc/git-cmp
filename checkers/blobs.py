@@ -2,14 +2,43 @@
 Blob level checker (individual files and file contents).
 """
 
-import sys
 from difflib import unified_diff
-
-import colorama
+from termcolor import colored
 
 from common import Common
 
-colorama.init()
+
+def __get_diff(data1, data2, path):
+    try:
+        diff = list(unified_diff(data1, data2, 'a' + path, 'b' + path))
+
+        buffer = ["Diff:\n"]
+
+        buffer.extend(diff[:2])
+
+        buffer.append(colored(diff[2], "cyan"))
+
+        for row in diff[3:]:
+            row_buffer = ""
+
+            if row.startswith('+'):
+                colour = "green"
+            elif row.startswith('-'):
+                colour = "red"
+            else:
+                colour = None
+
+            clean = row.rstrip()
+            row_buffer += colored(clean, colour)
+
+            if len(row) > 2 and len(clean) < len(row) - 1:
+                row_buffer += colored(row[len(clean):-1], on_color="on_red")
+            buffer.append(row_buffer + "\n")
+
+    except TypeError:
+        buffer = ["Binary files, no diff to be shown."]
+
+    return ''.join(buffer)
 
 
 def __comp_n_diff(data1, data2, blob_sha, note):
@@ -18,58 +47,17 @@ def __comp_n_diff(data1, data2, blob_sha, note):
 
     path = Common.blobs_info[blob_sha]['path']
 
-    print(Common.output)
-    print("    Contents of file {} in commit {} do not match!".
-          format(path, Common.blobs_info[blob_sha]['commit']))
-    if Common.args.verbose:
-        try:
-            diff = list(unified_diff(data1, data2, 'a' + path, 'b' + path))
-
-            print("Diff{}:".format(note))
-            sys.stdout.write(colorama.Style.BRIGHT)
-            for row in diff[:2]:
-                sys.stdout.write(row)
-            sys.stdout.write(colorama.Style.RESET_ALL)
-
-            sys.stdout.write(colorama.Fore.CYAN)
-            sys.stdout.write(diff[2])
-            sys.stdout.write(colorama.Style.RESET_ALL)
-
-            for row in diff[3:]:
-                if row.startswith('+'):
-                    sys.stdout.write(colorama.Fore.GREEN)
-                if row.startswith('-'):
-                    sys.stdout.write(colorama.Fore.RED)
-
-                clean = row.rstrip()
-                try:
-                    sys.stdout.write(clean)
-                except UnicodeEncodeError:
-                    sys.stdout.write(clean.encode('ascii', errors='ignore').decode())
-                    sys.stdout.write(colorama.Fore.CYAN)
-                    sys.stdout.write(' !!! Error in UTF encoding, this row is incomplete')
-                if len(row) > 2 and len(clean) < len(row) - 1:
-                    sys.stdout.write(colorama.Back.RED)
-                sys.stdout.write(row[len(clean):])
-                sys.stdout.write(colorama.Style.RESET_ALL)
-
-        except TypeError:
-            print("Binary files, no diff to be shown.")
-
-    exit(1)
+    Common.add_issue(f"Contents of file {path} in commit {Common.blobs_info[blob_sha]['commit']} do not match!{note}",
+                     __get_diff(data1, data2, path))
 
 
 def check():
     """
     Run the checker on blobs.
     """
-    Common.lazy_print("\n=== Blobs")
-
     for o_blob, n_blob in Common.blobs.items():
         if o_blob == n_blob:
             continue
-
-        Common.lazy_print("  Blob {}:".format(n_blob))
 
         try:
             original_lines = [l.decode() for l in Common.original[o_blob].data.splitlines(1)]
@@ -88,5 +76,3 @@ def check():
             data1 = [l.strip() + '\n' for l in original_lines]
             data2 = [l.strip() + '\n' for l in new_lines]
             __comp_n_diff(data1, data2, o_blob, ' (whitespace ignored)')
-
-    print("  OK")
