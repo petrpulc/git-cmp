@@ -14,37 +14,36 @@ def load_repository(path):
     """
     try:
         return pygit2.Repository(path)
-    except KeyError:
-        Common.lazy_print("'{}' is not a reposity.".format(path))
-        print(Common.output)
-        exit(1)
+    except pygit2.GitError:
+        Common.add_issue("'{}' is not a repository.".format(path))
 
 
-def check_diff(set1, set2, what, offset=0):
+def check_diff(set1, set2, what):
     """
     Check difference of two sets of values and inform user accordingly.
 
     :param set1: First set.
     :param set2: Second set.
     :param what: Text description of compared value.
-    :param offset: Printing offset.
     """
     if (set1 - set2) or (Common.args.pedantic and set1 != set2):
-        Common.lazy_print("{} mismatch!".format(' ' * offset + what))
-        if Common.args.verbose:
-            if set1 - set2 != set():
-                Common.lazy_print("{} expected, but not found".format(' ' * offset + ', '.join(set1 - set2)))
-            if set2 - set1 != set():
-                Common.lazy_print("{} found, but not expected".format(' ' * offset + ', '.join(set2 - set1)))
-        print(Common.output)
+        detail = ""
+        if set1 - set2:
+            detail = f"{', '.join(set1 - set2)} expected, but not found"
+        if set2 - set1:
+            detail = f"{', '.join(set2 - set1)} found, but not expected"
+        Common.add_issue(f"{what} mismatch!", detail)
+
+
+def check_issues_and_exit():
+    """
+    Check if there are any issues and if so, quit.
+    """
+    if Common.issues:
+        print("Found issues:")
+        for issue in Common.issues:
+            print(f"- {issue[0]}")
+            if issue[1] and Common.args.verbose:
+                print(f"{issue[1]}")
+                print()
         exit(1)
-
-
-def check_level_and_exit(level=None):
-    """
-    Check if given level is the final one and exit with 0.
-    :param level: Current level.
-    """
-    if level is None or Common.args.level == level:
-        print("\nRepositories match.")
-        exit()

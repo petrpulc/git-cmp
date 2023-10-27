@@ -1,102 +1,97 @@
 """
 Commit level checker (repository structure and commit properties).
 """
-
+import os
 import re
+import subprocess
+
+import pygit2
+from pygit2 import GIT_SORT_TIME
 
 from common import Common
+from asciidag.node import Node
+from asciidag.graph import Graph
 
 
 def __check_author(o_commit, n_commit):
-    if not Common.args.author:
-        return
     if o_commit.author.name != n_commit.author.name:
-        Common.lazy_print("      Commit author name does not match!")
-        print(Common.output)
-        exit(1)
+        Common.add_issue("Commit author name does not match!", f"on commit {n_commit.id}")
     if o_commit.author.email != n_commit.author.email:
-        Common.lazy_print("      Commit author email does not match!")
-        print(Common.output)
-        exit(1)
+        Common.add_issue("Commit author email does not match!", f"on commit {n_commit.id}")
 
 
 def __check_message(n_commit):
-    if not Common.args.reject_msg:
-        return
-    regexp = re.compile(Common.args.reject_msg)
-    if regexp.search(n_commit.message) is not None:
-        Common.lazy_print("      Commit message contains not allowed content!")
-        if Common.args.verbose:
-            Common.lazy_print("      ({})").format(Common.args.reject_msg)
-        print(Common.output)
-        exit(1)
+    if Common.reject_msg_regex.search(n_commit.message) is not None:
+        Common.add_issue("Commit message contains disallowed content!", f"on commit {n_commit.id}")
 
 
-def __browse_commits(o_commit, n_commit):
-    if Common.args.verbose:
-        Common.lazy_print("    ? {} == {}".format(o_commit.id, n_commit.id))
-    else:
-        Common.lazy_print("    Commit {}".format(n_commit.id))
-
-    # do not check again, detect clashes
+def __check_commits_and_return_hint(o_commit, n_commit):
+    """
+    Compare original and new commits.
+    :return: Whether reference graph should be listed or not
+    """
+    # do not check again, but detect clashes
     if o_commit.id in Common.commits:
-        if n_commit.id == Common.commits[o_commit.id]:
-            return
-        else:
-            if Common.args.verbose:
-                Common.lazy_print("      ! {} -> {}".format(o_commit.id, Common.commits[o_commit.id]))
-            Common.lazy_print("      Bad structure of repository, commit clash with: {}".
-                  format(Common.commits[o_commit.id]))
-            print(Common.output)
-            exit(1)
+        if n_commit.id != Common.commits[o_commit.id]:
+            Common.add_issue("Commit mapping clash.", f"of commits {n_commit.id} and {Common.commits[o_commit.id]}")
+            return True
+        return False
 
-    __check_author(o_commit, n_commit)
-    __check_message(n_commit)
+    if Common.args.author:
+        __check_author(o_commit, n_commit)
+    if Common.reject_msg_regex:
+        __check_message(n_commit)
 
     # check number of parents
     o_parents = o_commit.parents
     n_parents = n_commit.parents
     if len(o_parents) != len(n_parents):
-        if Common.args.verbose:
-            Common.lazy_print("      ! {} parents expected, {} present".format(len(o_parents), len(n_parents)))
-        Common.lazy_print("      Commit does not have same number of parents!")
-        print(Common.output)
-        exit(1)
+        Common.add_issue(f"Commit {n_commit.id} has bad number of parents.",
+                         f"{len(o_parents)} parents expected, {len(n_parents)} present")
+        return True
 
     # store to hash of mapped commits
     Common.commits[o_commit.id] = n_commit.id
 
     # stop if root
     if not o_parents:
-        return
+        return False
 
     # continue in same branch
-    __browse_commits(o_parents[0], n_parents[0])
+    if __check_commits_and_return_hint(o_parents[0], n_parents[0]):
+        return True
 
     # check length of subtrees
     for i in range(1, len(o_parents)):
-        o_sublen = sum(1 for _ in Common.original.walk(o_parents[i].id))
-        n_sublen = sum(1 for _ in Common.new.walk(n_parents[i].id))
+        o_sublen = len(list(Common.original.walk(o_parents[i].id)))
+        n_sublen = len(list(Common.new.walk(n_parents[i].id)))
         if o_sublen != n_sublen:
-            if Common.args.verbose:
-                Common.lazy_print("      ! walk of length {} expected, {} found".format(o_sublen, n_sublen))
-            Common.lazy_print("      Walk from parent {} differs in length!".format(n_parents[i].id))
-            print(Common.output)
-            exit(1)
+            Common.add_issue(f'Walk from parent {n_parents[i].id} differs in length!',
+                             f"walk of length {o_sublen} expected, {n_sublen} found")
+            return True
 
-        __browse_commits(o_parents[i], n_parents[i])
+        if __check_commits_and_return_hint(o_parents[i], n_parents[i]):
+            return True
+    return False
+
+
+def __print__hint(o_commit, n_commit):
+    Common.add_issue('Expecting repository structure:',
+                     subprocess.Popen(f"git log --oneline --graph --format=%s {o_commit.id}",
+                                      env={'GIT_DIR': Common.original.path},
+                                      shell=True, stdout=subprocess.PIPE).stdout.read().decode())
+    Common.add_issue('Submitted repository structure:',
+                     subprocess.Popen(f"git log --oneline --graph --format=%s {n_commit.id}",
+                                      env={'GIT_DIR': Common.new.path},
+                                      shell=True, stdout=subprocess.PIPE).stdout.read().decode())
 
 
 def check():
     """
     Run the checker on commits.
     """
-    Common.lazy_print("\n=== Commits")
-
     for reference in Common.references:
-        Common.lazy_print("  Browsing {}:".format(reference))
         o_commit = Common.original.lookup_reference(reference).peel()
         n_commit = Common.new.lookup_reference(reference).peel()
-        __browse_commits(o_commit, n_commit)
-
-    Common.lazy_print("  OK")
+        if __check_commits_and_return_hint(o_commit, n_commit) and Common.args.verbose:
+            __print__hint(o_commit, n_commit)
