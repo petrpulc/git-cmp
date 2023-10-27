@@ -16,7 +16,7 @@ def __get_diff(data1, data2, path):
 
         buffer.extend(diff[:2])
 
-        buffer.append(colored(diff[2], "cyan"))
+        buffer.append(colored(diff[2], "cyan", force_color=True))
 
         for row in diff[3:]:
             row_buffer = ""
@@ -29,10 +29,10 @@ def __get_diff(data1, data2, path):
                 colour = None
 
             clean = row.rstrip()
-            row_buffer += colored(clean, colour)
+            row_buffer += colored(clean, colour, force_color=True)
 
             if len(row) > 2 and len(clean) < len(row) - 1:
-                row_buffer += colored(row[len(clean):-1], on_color="on_red")
+                row_buffer += colored(row[len(clean):-1], on_color="on_red", force_color=True)
             buffer.append(row_buffer + "\n")
 
     except TypeError:
